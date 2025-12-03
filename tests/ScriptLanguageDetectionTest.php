@@ -13,7 +13,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('الحزمة');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -24,7 +24,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('բենգիմžē');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -35,7 +35,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('ǰǰô জ');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -46,7 +46,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('გამარჯობა');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -57,7 +57,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('ה ו ז ח ט');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -68,7 +68,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('ᠪᠣᠯᠠᠢ᠃');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -79,7 +79,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('สวัสดีชาวโลกและยินดีต้อนรับแพ็กเกจนี้');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -90,7 +90,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('ཀཁཆཇའ');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -101,7 +101,7 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('şçğüöı');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -112,6 +112,6 @@ class ScriptLanguageDetectionTest extends TestCase
         $image = $avatar->autoFont()->generate('ψψ');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 }

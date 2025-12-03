@@ -50,10 +50,10 @@ class GenerateTest extends TestCase
     {
         $avatar = new InitialAvatar();
 
-        $image = $avatar->font(2)->gd()->generate('LR');
+        $image = $avatar->gd()->generate('LR');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -64,7 +64,7 @@ class GenerateTest extends TestCase
         $image = $avatar->imagick()->generate('LR');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -75,7 +75,7 @@ class GenerateTest extends TestCase
         $image = $avatar->gd()->generate('LR');
 
         $this->assertEquals('Intervention\Image\Image', get_class($image));
-        $this->assertTrue($image->stream()->isReadable());
+        $this->assertNotEmpty($image->toJpeg()->size());
     }
 
     /** @test */
@@ -103,7 +103,7 @@ class GenerateTest extends TestCase
     {
         $avatar = new InitialAvatar();
 
-        $this->assertTrue($avatar->generate()->stream()->isReadable());
+        $this->assertNotEmpty($avatar->generate()->toJpeg()->size());
     }
 
     /** @test */

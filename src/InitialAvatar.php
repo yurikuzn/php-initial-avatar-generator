@@ -2,6 +2,9 @@
 
 namespace LasseRafn\InitialAvatarGenerator;
 
+use Intervention\Image\Drivers\Gd\Driver as GdDriver;
+use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
+use Intervention\Image\Geometry\Factories\CircleFactory;
 use Intervention\Image\Image;
 use Intervention\Image\ImageManager;
 use LasseRafn\InitialAvatarGenerator\Translator\Base;
@@ -10,6 +13,7 @@ use LasseRafn\InitialAvatarGenerator\Translator\Tr;
 use LasseRafn\InitialAvatarGenerator\Translator\ZhCN;
 use LasseRafn\Initials\Initials;
 use LasseRafn\StringScript;
+use RuntimeException;
 use SVG\Nodes\Shapes\SVGCircle;
 use SVG\Nodes\Shapes\SVGRect;
 use SVG\Nodes\Structures\SVGFont;
@@ -78,7 +82,15 @@ class InitialAvatar
      */
     protected function setupImageManager()
     {
-        $this->image = new ImageManager(['driver' => $this->getDriver()]);
+        $driver = $this->getDriver();
+
+        $driverInstance = match ($driver) {
+            'gd' => new GdDriver(),
+            'imagick' => new ImagickDriver(),
+            default => throw new RuntimeException("Unsupported driver."),
+        };
+
+        $this->image = new ImageManager($driverInstance);
     }
 
     /**
@@ -264,9 +276,9 @@ class InitialAvatar
     }
 
     /**
-     * Set the font file by path or int (1-5).
+     * Set the font file by path.
      *
-     * @param string|int $font
+     * @param string $font
      *
      * @return $this
      */
@@ -517,7 +529,7 @@ class InitialAvatar
     /**
      * Will return the font file parameter.
      *
-     * @return string|int
+     * @return string
      */
     public function getFontFile()
     {
@@ -691,12 +703,21 @@ class InitialAvatar
             $height *= 5;
         }
 
-        $avatar = $image->canvas($width, $height, !$this->getRounded() ? $bgColor : null);
+        $avatar = $image->create($width, $height);
+
+        if (!$this->getRounded()) {
+            $avatar = $avatar->fill($bgColor);
+        }
 
         if ($this->getRounded()) {
-            $avatar = $avatar->circle($width - 2, $width / 2, $height / 2, function ($draw) use ($bgColor) {
-                return $draw->background($bgColor);
-            });
+            $avatar = $avatar->drawCircle(
+                x: $width / 2,
+                y: $height / 2,
+                init: function (CircleFactory $circle) use ($width, $bgColor) {
+                    $circle->radius($width -2);
+                    $circle->background($bgColor);
+                }
+            );
         }
 
         if ($this->getRounded() && $this->getSmooth()) {
@@ -706,7 +727,10 @@ class InitialAvatar
         }
 
         return $avatar->text($name, $width / 2, $height / 2, function ($draw) use ($width, $color, $fontFile, $fontSize) {
-            $draw->file($fontFile);
+            if ($fontFile !== null) {
+                $draw->filename($fontFile);
+            }
+
             $draw->size($width * $fontSize);
             $draw->color($color);
             $draw->align('center');
@@ -755,16 +779,16 @@ class InitialAvatar
         return $image;
     }
 
+
+    /**
+     * @return string|null
+     */
     protected function findFontFile()
     {
         $fontFile = $this->getFontFile();
 
         if ($this->getAutoFont()) {
             $fontFile = $this->getFontByScript();
-        }
-
-        if (is_int($fontFile) && \in_array($fontFile, [1, 2, 3, 4, 5], false)) {
-            return $fontFile;
         }
 
         $weightsToTry = ['Regular'];
@@ -791,7 +815,7 @@ class InitialAvatar
             }
         }
 
-        return 1;
+        return null;
     }
 
     protected function getFontByScript()
